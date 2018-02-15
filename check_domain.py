@@ -7,6 +7,7 @@ import threading
 import socket as soc
 import re
 import string
+import itertools
 
 
 class WorkThread(threading.Thread):
@@ -47,10 +48,11 @@ class WorkThread(threading.Thread):
             soc.gethostbyname(next_addr)
             print(self.name, next_addr, ' - is available')
         except:
+            #print(self.name, next_addr, ' - isnt available')
             pass
 
 
-class Strategies():
+class Strategies:
     def __init__(self, domain):
         self.domain = domain
 
@@ -80,7 +82,8 @@ class Strategies():
 
     def deleting(self):
         """
-        Добавляет в список доменов для проверки домены, которые получаются путем удаления одного символа из изначального домена.
+        Добавляет в список доменов для проверки домены,
+        которые получаются путем удаления одного символа из изначального домена.
         :return: список доменов для проверки
         """
         domain_del_list = []
@@ -90,11 +93,29 @@ class Strategies():
             i += 1
         return domain_del_list
 
+    def homoglyphs(self, h_list):
+        """
+        Добавляет в список доменов для проверки домены-омоглифы.
+        :param h_list: список омоглифов - похожих букв. В интернете есть библиотека - confusable-homoglyphs,
+        но она отражает только разницу в языке: (i - l,1) не будет распознаваться в этой библиотеке.
+        Поэтому вводим вручную.
+        :return: список доменов для проверки
+        """
+        dom_h_list = [h_list[letter] for letter in self.domain]
+        return list(''.join(u) for u in [element for element in itertools.product(*dom_h_list)])
+
 
 if __name__ == "__main__":
     domain = input('Enter domain: ')
-    choose = input('Choose strategy: \n 1.Adding \n 2.Subdomain \n 3.Deleting \n')
-    zone_list = ['com', 'ru', 'net', 'org', 'info', 'cn', 'es', 'top', 'au', 'pl', 'it', 'uk', 'tk', 'ml', 'ga', 'cf', 'us', 'xyz', 'top', 'site', 'win', 'bid']
+    choose = input('Choose strategy: \n 1.Adding \n 2.Subdomain \n 3.Deleting \n 4.Homoglyphs \n ')
+    zone_list = ['com', 'ru', 'net', 'org', 'info', 'cn', 'es', 'top', 'au', 'pl', 'it', 'uk', 'tk', 'ml', 'ga', 'cf',
+                 'us', 'xyz', 'top', 'site', 'win', 'bid']
+    homoglyph_list = {'a': ['a', 'o'], 'b': ['b', 'ь'], 'c': ['c', 'с', 'e'], 'd': ['d', 'b', 'ь'],
+                      'e': ['e', 'е', 'ё', 'o', 'c'], 'f': ['f', 't'], 'g': ['g', 'j'], 'h': ['h', 'b'],
+                      'i': ['i', '1', 'l'], 'j': ['j', 'g'], 'k': ['k', 'к'], 'l': ['l', 'i', '1'], 'm': ['m', 'n'],
+                      'n': ['n', 'm'], 'o': ['o', '0', 'о'], 'p': ['p', 'р'], 'q': ['q', 'p', 'р'],'r': ['r'],
+                      's': ['s', 'c'], 't': ['t', 'f'], 'u': ['u', 'и', 'v'], 'v': ['v', 'u'], 'w': ['w', 'vv'],
+                      'x': ['x', 'х'], 'y': ['y', 'g', 'j'], 'z': ['z', 's'], '-': ['-', '--'], '_': ['_', '__']}
     domain_list = []
     if choose == '1':
         s = Strategies(domain)
@@ -105,11 +126,12 @@ if __name__ == "__main__":
     elif choose == '3':
         s = Strategies(domain)
         domain_list = s.deleting()
-    address_list = []
-    for zone in zone_list:
-        for dom in domain_list:
-            address_list.append(dom + '.' + zone)
-    print(address_list)
+    elif choose == '4':
+        s = Strategies(domain)
+        domain_list = s.homoglyphs(homoglyph_list)
+    address_list = [dom + '.' + zone for zone in zone_list for dom in domain_list]
+    #print(address_list)
+    print('Total - ', len(address_list))
     addrs_lock = threading.Lock()
     for x in range(0, 3):
         newthread = WorkThread(address_list, addrs_lock)
