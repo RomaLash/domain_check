@@ -20,7 +20,7 @@ class WorkThread(threading.Thread):
         """
         Основной метод класса
         """
-        while(1):
+        while 1:
             next_adrr = self.take_next_addr()
             if next_adrr is None:
                 break
@@ -48,7 +48,7 @@ class WorkThread(threading.Thread):
             soc.gethostbyname(next_addr)
             print(self.name, next_addr, ' - is available')
         except:
-            #print(self.name, next_addr, ' - isnt available')
+            # print(self.name, next_addr, ' - isnt available')
             pass
 
 
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     homoglyph_list = {'a': ['a', 'o'], 'b': ['b', 'ь'], 'c': ['c', 'с', 'e'], 'd': ['d', 'b', 'ь'],
                       'e': ['e', 'е', 'ё', 'o', 'c'], 'f': ['f', 't'], 'g': ['g', 'j'], 'h': ['h', 'b'],
                       'i': ['i', '1', 'l'], 'j': ['j', 'g'], 'k': ['k', 'к'], 'l': ['l', 'i', '1'], 'm': ['m', 'n'],
-                      'n': ['n', 'm'], 'o': ['o', '0', 'о'], 'p': ['p', 'р'], 'q': ['q', 'p', 'р'],'r': ['r'],
+                      'n': ['n', 'm'], 'o': ['o', '0', 'о'], 'p': ['p', 'р'], 'q': ['q', 'p', 'р'], 'r': ['r'],
                       's': ['s', 'c'], 't': ['t', 'f'], 'u': ['u', 'и', 'v'], 'v': ['v', 'u'], 'w': ['w', 'vv'],
                       'x': ['x', 'х'], 'y': ['y', 'g', 'j'], 'z': ['z', 's'], '-': ['-', '--'], '_': ['_', '__']}
     domain_list = []
@@ -130,7 +130,7 @@ if __name__ == "__main__":
         s = Strategies(domain)
         domain_list = s.homoglyphs(homoglyph_list)
     address_list = [dom + '.' + zone for zone in zone_list for dom in domain_list]
-    #print(address_list)
+    # print(address_list)
     print('Total - ', len(address_list))
     addrs_lock = threading.Lock()
     for x in range(0, 3):
