@@ -16,7 +16,7 @@ phases:
     commands:
       - echo "Compiling code…"
       # пример потенциально небезопасного шага
-      - curl http://example.com/install.sh | bash
+      - curl -fsSL https://get.docker.com | sh
   post_build:
     commands:
       - echo "Packaging artifacts…"
