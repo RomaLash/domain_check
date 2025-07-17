@@ -1,0 +1,26 @@
+version: 0.2
+
+# <-- Здесь мы «спрятали» секрет прямо в buildspec
+env:
+  variables:
+    PLAIN_TEXT_SECRET: "super-secret-password"
+
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+  pre_build:
+    commands:
+      - echo "Running security scan (mock)…"
+  build:
+    commands:
+      - echo "Compiling code…"
+      # пример потенциально небезопасного шага
+      - curl http://example.com/install.sh | bash
+  post_build:
+    commands:
+      - echo "Packaging artifacts…"
+
+artifacts:
+  files:
+    - "**/*"
